@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -91,8 +91,11 @@ namespace DL
         {
             return trt_.predict_yolact();
         }
+        public BboxContainer_Rst_List PredictYolov5()
+        {
+            return trt_.predict_yolov5();
+        }
 
-       
         public void ClearBuffer()
         {
             trt_.clear_buffer();
