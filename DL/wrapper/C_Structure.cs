@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -53,6 +53,10 @@ namespace C_STRUCTURE
         public UInt32 cnt;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_BATCH_SIZE)]
         public BboxContainer[] container_list;
+        public BboxContainer this[int index]
+        {
+            get { return container_list[index]; }
+        }
 
     }
     [StructLayout(LayoutKind.Sequential)]
