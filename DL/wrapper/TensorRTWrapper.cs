@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,9 +41,5 @@ namespace Wrapper
 
         [DllImport(DnnLibraryName, EntryPoint = "trt_dispose")]
         public static extern int trt_dispose(int gpu = 0);
-
-       
-
-
     }
 }
