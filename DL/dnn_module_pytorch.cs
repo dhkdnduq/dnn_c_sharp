@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -15,14 +15,17 @@ namespace DL
 {
     class dnn_module_pytorch
     {
-        model_config config_ = new model_config();
-        private static Dictionary<int, string> namesDic_ = new Dictionary<int, string>();
-        //private static Wrapper.PytorchWrapper wrapper_;
+        private int gpu_index_ { get; set; }
         public bool isinit_ { get; set; }
+
+        public dnn_module_pytorch(int gpu =0)
+        {
+            gpu_index_ = gpu;
+        }
         public bool load_model(string configpath = "dnn_setting.json")
         {
 
-            if(!PytorchWrapper.torch_init(configpath))
+            if(!PytorchWrapper.torch_init(configpath, gpu_index_))
             {
                 isinit_ = false;
                 return false;
@@ -32,7 +35,7 @@ namespace DL
         }
         public bool add_image(string filepath)
         {
-            return PytorchWrapper.torch_add_image_file(filepath);
+            return PytorchWrapper.torch_add_image_file(filepath, gpu_index_);
         }
         public bool add_image(Bitmap bitmap)
         {
@@ -44,7 +47,7 @@ namespace DL
             try
             {
                 Marshal.Copy(imageData, 0, pnt, imageData.Length);
-                success = PytorchWrapper.torch_add_encoded_image(pnt, imageData.Length);
+                success = PytorchWrapper.torch_add_encoded_image(pnt, imageData.Length, gpu_index_);
             }
             catch (Exception e)
             {
@@ -56,24 +59,24 @@ namespace DL
             {
                 Marshal.FreeHGlobal(pnt);
             }
-                return success;
+            return success;
         }
         public BboxContainer_Rst_List predict_efficient_detect()
         {
             BboxContainer_Rst_List rst = new BboxContainer_Rst_List();
-            PytorchWrapper.torch_effdet(ref rst);
+            PytorchWrapper.torch_effdet(ref rst, gpu_index_);
             return rst;
         } 
         public Binary_Rst_List predict_binary_classification()
         {
             Binary_Rst_List rst = new Binary_Rst_List();
-            PytorchWrapper.torch_binary_classification(ref rst);
+            PytorchWrapper.torch_binary_classification(ref rst, gpu_index_);
             return rst;
         }
         public SegmContainer_Rst_List predict_anomaly_detection(int category)
         {
             SegmContainer_Rst_List rst = new SegmContainer_Rst_List();
-            PytorchWrapper.torch_anomaly_detection(ref rst, category);
+            PytorchWrapper.torch_anomaly_detection(ref rst, category, gpu_index_);
             return rst;
         }
         public void ReleaseSegmContainer(ref SegmContainer_Rst_List container)
@@ -83,7 +86,7 @@ namespace DL
 
         public void dispose()
         {
-            PytorchWrapper.torch_dispose();
+            PytorchWrapper.torch_dispose(gpu_index_);
         }
     }
 }
