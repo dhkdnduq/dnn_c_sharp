@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 static class Constants
 {
     public const int MAX_OBJECTS = 10; 
-    public const int MAX_BATCH_SIZE = 10; //need to change stack memory
+    public const int MAX_BATCH_SIZE = 150; 
 }
 namespace C_STRUCTURE
 {
@@ -59,6 +59,7 @@ namespace C_STRUCTURE
         }
 
     }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct ImageInfo
     {
@@ -105,7 +106,7 @@ namespace C_STRUCTURE
     public struct Binary_Rst_List
     {
         public UInt32 cnt;
-        [MarshalAs(UnmanagedType.U1, SizeConst = Constants.MAX_BATCH_SIZE)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_BATCH_SIZE)]
         public bool[] container_list;
 
     }
@@ -113,7 +114,7 @@ namespace C_STRUCTURE
     public struct Category_Rst_List
     {
         public UInt32 cnt;
-        [MarshalAs(UnmanagedType.U4, SizeConst = Constants.MAX_BATCH_SIZE)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAX_BATCH_SIZE)]
         public UInt32[] container_list;
 
     }
