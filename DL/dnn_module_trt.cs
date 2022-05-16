@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -16,11 +16,15 @@ namespace DL
 {
     class dnn_module_trt
     {
-        private static Dictionary<int, string> namesDic_ = new Dictionary<int, string>();
+        private int gpu_index_ { get; set; }
         public bool isinit_ { get; set; }
+        public dnn_module_trt(int gpu = 0)
+        {
+            gpu_index_ = gpu;
+        }
         public bool load_model(string configpath = "dnn_setting.json")
         {
-            if (!TensorRTWrapper.trt_init(configpath))
+            if (!TensorRTWrapper.trt_init(configpath,gpu_index_))
             {
                 isinit_ = false;
                 return false;
@@ -28,9 +32,13 @@ namespace DL
             isinit_ = true;
             return true;
         }
+        public int get_batch_size()
+        {
+            return TensorRTWrapper.trt_get_batch_size(gpu_index_);
+        }
         public bool add_image(string filepath)
         {
-            return TensorRTWrapper.trt_add_image_file(filepath);
+            return TensorRTWrapper.trt_add_image_file(filepath, gpu_index_);
         }
         public bool add_image(Bitmap bitmap)
         {
@@ -42,7 +50,7 @@ namespace DL
             try
             {
                 Marshal.Copy(imageData, 0, pnt, imageData.Length);
-                success = TensorRTWrapper.trt_add_encoded_image(pnt, imageData.Length);
+                success = TensorRTWrapper.trt_add_encoded_image(pnt, imageData.Length, gpu_index_);
             }
             catch (Exception e)
             {
@@ -59,18 +67,25 @@ namespace DL
         public Category_Rst_List predict_category_classification()
         {
             Category_Rst_List rst = new Category_Rst_List();
-            TensorRTWrapper.trt_category_classification(ref rst);
+            TensorRTWrapper.trt_category_classification(ref rst, gpu_index_);
             return rst;
         }
         public SegmContainer_Rst_List predict_yolact()
         {
             SegmContainer_Rst_List rst = new SegmContainer_Rst_List();
-            TensorRTWrapper.trt_yolact(ref rst);
+            TensorRTWrapper.trt_yolact(ref rst, gpu_index_);
             return rst;
         }
+        public BboxContainer_Rst_List predict_yolov5()
+        {
+            BboxContainer_Rst_List rst = new BboxContainer_Rst_List();
+            TensorRTWrapper.trt_yolov5(ref rst, gpu_index_);
+            return rst;
+        }
+
         public void clear_buffer()
         {
-            TensorRTWrapper.trt_clear_buffer();
+            TensorRTWrapper.trt_clear_buffer(gpu_index_);
         }
 
         public void release_segm_container(ref SegmContainer_Rst_List container)
@@ -79,7 +94,8 @@ namespace DL
         }
         public void dispose()
         {
-            TensorRTWrapper.trt_dispose();
+            isinit_ = false;
+            TensorRTWrapper.trt_dispose(gpu_index_);
         }
     }
 }
