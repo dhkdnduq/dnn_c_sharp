@@ -16,7 +16,7 @@ using OpenCvSharp.Extensions;
  
 namespace dnnconsole
 {
-    class Program_Man
+    class Program_trt
     {
         static void Main(string[] args)
         {
