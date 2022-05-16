@@ -19,6 +19,9 @@ namespace Wrapper
        
         [DllImport(DnnLibraryName, EntryPoint = "trt_init")]
         public static extern bool trt_init(string configurationFilename, int gpu = 0);
+        [DllImport(DnnLibraryName, EntryPoint = "trt_get_batch_size")]
+        public static extern int trt_get_batch_size(int gpu = 0);
+
 
         [DllImport(DnnLibraryName, EntryPoint = "trt_add_image_file")]
         public static extern bool trt_add_image_file(string filename, int gpu = 0);
