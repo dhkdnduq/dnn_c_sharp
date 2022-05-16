@@ -21,9 +21,9 @@ namespace DL
     {
         internal dnn_module_pytorch torch_;
 
-        public Pytorch()
+        public Pytorch(int gpu = 0)
         {
-            torch_ = new dnn_module_pytorch();
+            torch_ = new dnn_module_pytorch(gpu);
         }
         public bool LoadModel(string configpath = "dnn_setting.json")
         {
@@ -63,10 +63,9 @@ namespace DL
     public class TensorRT : Common
     {
         internal dnn_module_trt trt_;
-
-        public TensorRT()
+        public TensorRT(int gpu = 0)
         {
-            trt_ = new dnn_module_trt();
+            trt_ = new dnn_module_trt(gpu);
         }
         public bool LoadModel(string configpath = "dnn_setting.json")
         {
@@ -78,6 +77,10 @@ namespace DL
         public bool AddImage(Bitmap bitmap)
         {
             return trt_.add_image(bitmap);
+        }
+        public int GetBatchSize()
+        {
+            return trt_.get_batch_size();
         }
         public bool AddImage(string filepath)
         {
